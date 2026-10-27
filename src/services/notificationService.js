@@ -1,13 +1,38 @@
+import { apiClient } from './api/apiClient';
 import { mockStorage, STORAGE_KEYS } from './api/mockStorage';
 
 export const notificationService = {
   async getAll() {
+    if (apiClient.isBackendActive()) {
+      try {
+        const list = await apiClient.get('/notifications');
+        return list.map(n => ({
+          ...n,
+          read: n.isRead !== undefined ? n.isRead : n.read
+        }));
+      } catch (err) {
+        console.warn('[notificationService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(150);
     const list = mockStorage.get(STORAGE_KEYS.NOTIFICATIONS);
     return list;
   },
 
   async markAsRead(id) {
+    if (apiClient.isBackendActive()) {
+      try {
+        const res = await apiClient.patch(`/notifications/${id}/read`);
+        return {
+          ...res,
+          read: res.isRead !== undefined ? res.isRead : res.read
+        };
+      } catch (err) {
+        console.warn('[notificationService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(100);
     const list = mockStorage.get(STORAGE_KEYS.NOTIFICATIONS);
     const item = list.find(n => n.id === id);
@@ -19,6 +44,15 @@ export const notificationService = {
   },
 
   async markAllAsRead() {
+    if (apiClient.isBackendActive()) {
+      try {
+        await apiClient.post('/notifications/read-all');
+        return await this.getAll();
+      } catch (err) {
+        console.warn('[notificationService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(150);
     const list = mockStorage.get(STORAGE_KEYS.NOTIFICATIONS);
     list.forEach(n => { n.read = true; });

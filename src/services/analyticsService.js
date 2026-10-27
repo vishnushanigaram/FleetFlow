@@ -1,8 +1,17 @@
+import { apiClient } from './api/apiClient';
 import { mockStorage, STORAGE_KEYS } from './api/mockStorage';
 import { VEHICLE_STATUS, DRIVER_STATUS, TRIP_STATUS, DELIVERY_STATUS, MAINTENANCE_STATUS } from '../utils/constants';
 
 export const analyticsService = {
   async getDashboardMetrics() {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.get('/analytics/dashboard');
+      } catch (err) {
+        console.warn('[analyticsService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(200);
 
     const vehicles = mockStorage.get(STORAGE_KEYS.VEHICLES);
@@ -124,6 +133,23 @@ export const analyticsService = {
   },
 
   async getReportsData() {
+    if (apiClient.isBackendActive()) {
+      try {
+        const [metrics, vehicles, drivers, trips, deliveries, maintenance, fuel] = await Promise.all([
+          this.getDashboardMetrics(),
+          apiClient.get('/vehicles'),
+          apiClient.get('/drivers'),
+          apiClient.get('/trips'),
+          apiClient.get('/deliveries'),
+          apiClient.get('/maintenance'),
+          apiClient.get('/fuel-records')
+        ]);
+        return { metrics, vehicles, drivers, trips, deliveries, maintenance, fuel };
+      } catch (err) {
+        console.warn('[analyticsService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(220);
     const metrics = await this.getDashboardMetrics();
     const vehicles = mockStorage.get(STORAGE_KEYS.VEHICLES);

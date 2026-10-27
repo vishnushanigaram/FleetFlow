@@ -1,8 +1,23 @@
+import { apiClient } from './api/apiClient';
 import { mockStorage, STORAGE_KEYS } from './api/mockStorage';
 import { MAINTENANCE_STATUS, VEHICLE_STATUS } from '../utils/constants';
 
 export const maintenanceService = {
   async getAll({ search = '', status = '', serviceType = '', vehicleId = '', sortBy = 'scheduledDate', sortOrder = 'desc' } = {}) {
+    if (apiClient.isBackendActive()) {
+      try {
+        let list = await apiClient.get('/maintenance', { search, status, serviceType, vehicleId });
+        list.sort((a, b) => {
+          let valA = a[sortBy] ?? '';
+          let valB = b[sortBy] ?? '';
+          return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        });
+        return list;
+      } catch (err) {
+        console.warn('[maintenanceService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(200);
     let list = mockStorage.get(STORAGE_KEYS.MAINTENANCE);
 
@@ -38,6 +53,14 @@ export const maintenanceService = {
   },
 
   async getById(id) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.get(`/maintenance/${id}`);
+      } catch (err) {
+        console.warn('[maintenanceService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(180);
     const list = mockStorage.get(STORAGE_KEYS.MAINTENANCE);
     const item = list.find(m => m.id === id);
@@ -46,6 +69,15 @@ export const maintenanceService = {
   },
 
   async create(data) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.post('/maintenance', data);
+      } catch (err) {
+        console.warn('[maintenanceService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(300);
     const maintenanceList = mockStorage.get(STORAGE_KEYS.MAINTENANCE);
     const vehicles = mockStorage.get(STORAGE_KEYS.VEHICLES);
@@ -80,6 +112,15 @@ export const maintenanceService = {
   },
 
   async updateStatus(id, newStatus, completedDate = null) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.patch(`/maintenance/${id}/status`, { status: newStatus });
+      } catch (err) {
+        console.warn('[maintenanceService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(220);
     const maintenanceList = mockStorage.get(STORAGE_KEYS.MAINTENANCE);
     const vehicles = mockStorage.get(STORAGE_KEYS.VEHICLES);

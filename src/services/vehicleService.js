@@ -1,8 +1,28 @@
+import { apiClient } from './api/apiClient';
 import { mockStorage, STORAGE_KEYS } from './api/mockStorage';
 import { VEHICLE_STATUS } from '../utils/constants';
 
 export const vehicleService = {
   async getAll({ search = '', status = '', type = '', fuelType = '', sortBy = 'registrationNo', sortOrder = 'asc' } = {}) {
+    if (apiClient.isBackendActive()) {
+      try {
+        let list = await apiClient.get('/vehicles', { search, status, type, fuelType });
+        // Client-side sort guarantee
+        list.sort((a, b) => {
+          let valA = a[sortBy] ?? '';
+          let valB = b[sortBy] ?? '';
+          if (typeof valA === 'string') {
+            const comp = valA.localeCompare(valB);
+            return sortOrder === 'asc' ? comp : -comp;
+          }
+          return sortOrder === 'asc' ? valA - valB : valB - valA;
+        });
+        return list;
+      } catch (err) {
+        console.warn('[vehicleService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(200);
     let list = mockStorage.get(STORAGE_KEYS.VEHICLES);
 
@@ -47,6 +67,14 @@ export const vehicleService = {
   },
 
   async getById(id) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.get(`/vehicles/${id}`);
+      } catch (err) {
+        console.warn('[vehicleService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(180);
     const list = mockStorage.get(STORAGE_KEYS.VEHICLES);
     const item = list.find(v => v.id === id);
@@ -55,6 +83,15 @@ export const vehicleService = {
   },
 
   async create(data) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.post('/vehicles', data);
+      } catch (err) {
+        console.warn('[vehicleService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(300);
     const list = mockStorage.get(STORAGE_KEYS.VEHICLES);
 
@@ -89,6 +126,15 @@ export const vehicleService = {
   },
 
   async update(id, data) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.put(`/vehicles/${id}`, data);
+      } catch (err) {
+        console.warn('[vehicleService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(250);
     const list = mockStorage.get(STORAGE_KEYS.VEHICLES);
     const index = list.findIndex(v => v.id === id);
@@ -109,6 +155,15 @@ export const vehicleService = {
   },
 
   async delete(id) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.delete(`/vehicles/${id}`);
+      } catch (err) {
+        console.warn('[vehicleService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(250);
     let list = mockStorage.get(STORAGE_KEYS.VEHICLES);
     const vehicle = list.find(v => v.id === id);
@@ -124,6 +179,15 @@ export const vehicleService = {
   },
 
   async addDocument(vehicleId, doc) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.post(`/vehicles/${vehicleId}/documents`, doc);
+      } catch (err) {
+        console.warn('[vehicleService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(200);
     const list = mockStorage.get(STORAGE_KEYS.VEHICLES);
     const vehicle = list.find(v => v.id === vehicleId);
@@ -143,6 +207,19 @@ export const vehicleService = {
   },
 
   async getVehicleFullHistory(vehicleId) {
+    if (apiClient.isBackendActive()) {
+      try {
+        const [trips, maintenance, fuel] = await Promise.all([
+          apiClient.get('/trips', { vehicleId }),
+          apiClient.get('/maintenance', { vehicleId }),
+          apiClient.get('/fuel-records', { vehicleId })
+        ]);
+        return { trips, maintenance, fuel };
+      } catch (err) {
+        console.warn('[vehicleService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(200);
     const trips = mockStorage.get(STORAGE_KEYS.TRIPS).filter(t => t.vehicleId === vehicleId);
     const maintenance = mockStorage.get(STORAGE_KEYS.MAINTENANCE).filter(m => m.vehicleId === vehicleId);

@@ -1,3 +1,4 @@
+import { apiClient } from './api/apiClient';
 import { mockStorage, STORAGE_KEYS } from './api/mockStorage';
 import { DEMO_ACCOUNTS, ROLES } from '../utils/constants';
 
@@ -6,6 +7,23 @@ const AUTH_TOKEN_KEY = 'fleetflow_auth_token';
 
 export const authService = {
   async login({ email, password }) {
+    if (apiClient.isBackendActive()) {
+      try {
+        const response = await apiClient.post('/auth/login', { email, password });
+        if (response && response.user && response.token) {
+          localStorage.setItem(AUTH_TOKEN_KEY, response.token);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(response.user));
+          return response;
+        }
+      } catch (err) {
+        console.warn('[authService] Spring Boot login failed, falling back to mock:', err.message);
+        // If password is wrong or user not found, rethrow
+        if (err.message.includes('Invalid credentials') || err.message.includes('not found')) {
+          throw err;
+        }
+      }
+    }
+
     await mockStorage.delay(300);
 
     const users = mockStorage.get(STORAGE_KEYS.USERS);
@@ -28,6 +46,28 @@ export const authService = {
   },
 
   async register({ name, email, role = ROLES.DRIVER, phone = '' }) {
+    if (apiClient.isBackendActive()) {
+      try {
+        const response = await apiClient.post('/auth/register', {
+          name,
+          email,
+          role,
+          phone,
+          title: `${role.charAt(0).toUpperCase() + role.slice(1)} Member`,
+          status: 'Active',
+          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+        });
+        if (response && response.user && response.token) {
+          localStorage.setItem(AUTH_TOKEN_KEY, response.token);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(response.user));
+          return response;
+        }
+      } catch (err) {
+        console.warn('[authService] Spring Boot registration failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(350);
 
     const users = mockStorage.get(STORAGE_KEYS.USERS);

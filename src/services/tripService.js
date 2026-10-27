@@ -1,8 +1,26 @@
+import { apiClient } from './api/apiClient';
 import { mockStorage, STORAGE_KEYS } from './api/mockStorage';
 import { TRIP_STATUS, VEHICLE_STATUS, DRIVER_STATUS, DELIVERY_STATUS } from '../utils/constants';
 
 export const tripService = {
   async getAll({ search = '', status = '', vehicleId = '', driverId = '', sortBy = 'plannedStart', sortOrder = 'desc' } = {}) {
+    if (apiClient.isBackendActive()) {
+      try {
+        let list = await apiClient.get('/trips', { search, status, vehicleId, driverId });
+        list.sort((a, b) => {
+          let valA = a[sortBy] ?? '';
+          let valB = b[sortBy] ?? '';
+          if (typeof valA === 'string') {
+            return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+          }
+          return sortOrder === 'asc' ? valA - valB : valB - valA;
+        });
+        return list;
+      } catch (err) {
+        console.warn('[tripService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(220);
     let list = mockStorage.get(STORAGE_KEYS.TRIPS);
 
@@ -47,6 +65,14 @@ export const tripService = {
   },
 
   async getById(id) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.get(`/trips/${id}`);
+      } catch (err) {
+        console.warn('[tripService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(180);
     const list = mockStorage.get(STORAGE_KEYS.TRIPS);
     const trip = list.find(t => t.id === id);
@@ -55,6 +81,15 @@ export const tripService = {
   },
 
   async create(data, createdByName = 'Sarah Jenkins') {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.post('/trips', data, { createdBy: createdByName });
+      } catch (err) {
+        console.warn('[tripService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(350);
 
     const vehicles = mockStorage.get(STORAGE_KEYS.VEHICLES);
@@ -140,6 +175,15 @@ export const tripService = {
   },
 
   async updateStatus(tripId, newStatus, note = '', updatedBy = 'Operations Dispatcher') {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.patch(`/trips/${tripId}/status`, { status: newStatus, note, updatedBy });
+      } catch (err) {
+        console.warn('[tripService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(280);
 
     const trips = mockStorage.get(STORAGE_KEYS.TRIPS);

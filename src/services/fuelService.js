@@ -1,7 +1,22 @@
+import { apiClient } from './api/apiClient';
 import { mockStorage, STORAGE_KEYS } from './api/mockStorage';
 
 export const fuelService = {
   async getAll({ vehicleId = '', sortBy = 'date', sortOrder = 'desc' } = {}) {
+    if (apiClient.isBackendActive()) {
+      try {
+        let list = await apiClient.get('/fuel-records', { vehicleId });
+        list.sort((a, b) => {
+          let valA = a[sortBy] ?? '';
+          let valB = b[sortBy] ?? '';
+          return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        });
+        return list;
+      } catch (err) {
+        console.warn('[fuelService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(200);
     let list = mockStorage.get(STORAGE_KEYS.FUEL);
 
@@ -19,6 +34,15 @@ export const fuelService = {
   },
 
   async create(data) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.post('/fuel-records', data);
+      } catch (err) {
+        console.warn('[fuelService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(280);
     const list = mockStorage.get(STORAGE_KEYS.FUEL);
     const vehicles = mockStorage.get(STORAGE_KEYS.VEHICLES);
@@ -51,6 +75,14 @@ export const fuelService = {
   },
 
   async getFuelMetrics() {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.get('/fuel-records/metrics');
+      } catch (err) {
+        console.warn('[fuelService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(180);
     const records = mockStorage.get(STORAGE_KEYS.FUEL);
 

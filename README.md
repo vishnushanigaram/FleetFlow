@@ -203,20 +203,50 @@ npm run preview
 
 ---
 
-## 9. Future Full-Stack Roadmap (Spring Boot + MySQL + AI)
+## 9. Full-Stack Integration (Spring Boot REST API + React)
 
-| Phase | Technology | Architecture & Objective |
-| :--- | :--- | :--- |
-| **Stage 1** | **React + Mock REST API** | *(Current Implementation)* Modular frontend with strict service decoupling, responsive UI, validation, and local persistence. |
-| **Stage 2** | **Java Spring Boot REST API** | Replace `mockStorage.js` with Spring Boot `@RestController` classes exposing matching endpoints (`/api/v1/vehicles`, `/api/v1/trips`, etc.). |
-| **Stage 3** | **Spring Data JPA + MySQL** | Relational data persistence with foreign keys (`Vehicle` -> `Trips`, `Driver` -> `Trips`, `Trip` -> `Deliveries`, `Vehicle` -> `Maintenance`). |
-| **Stage 4** | **Spring Security + JWT** | Stateless JWT authentication, role guards (`@PreAuthorize("hasRole('MANAGER')")`), password hashing with BCrypt. |
-| **Stage 5** | **Real GPS Telemetry** | Integrate WebSocket / MQTT streaming from on-vehicle IoT trackers into Spring Boot and push live coords to the React map. |
-| **Stage 6** | **AI Logistics Integration** | Spring Boot AI integration (Gemini API / Vertex AI) to recommend optimal cargo load combinations, estimate transit delay risk, and predict vehicle maintenance intervals based on odometer patterns. |
+The project now includes an enterprise **Java Spring Boot 3.3.4** backend located in the `../fleetflow-backend` directory, delivering complete full-stack integration with automatic fallback support.
+
+### Dual-Mode Architecture & Auto-Detection
+The frontend `apiClient.js` automatically probes `http://localhost:8080/api/v1` on startup:
+1. **When Spring Boot is running**: React transparently routes all REST operations (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) to the Spring Boot backend and persists data in H2/MySQL. A live green badge **"Spring Boot Active"** appears in the header.
+2. **When Spring Boot is offline**: React smoothly falls back to the client-side persistent storage with zero crashes or broken UI. The header displays **"Mock DB Active"**.
+3. **Manual Overrides**: Users can click the backend badge in the top navigation bar to force Spring Boot mode, force Mock mode, or re-test live connectivity at any time.
+
+### How to Run Full-Stack (Frontend + Backend)
+
+#### Step 1: Start the Spring Boot Backend (Port 8080)
+```bash
+cd ../fleetflow-backend
+mvn spring-boot:run
+# Or on Windows using wrapper:
+# .\mvnw.cmd spring-boot:run
+```
+*Backend endpoints will be live at `http://localhost:8080/api/v1` and H2 console at `http://localhost:8080/api/v1/h2-console`.*
+
+#### Step 2: Start the React Frontend (Port 3000)
+```bash
+cd fleetflow-react
+npm run dev
+```
+*The Vite development server runs on `http://localhost:3000` with an automatic reverse proxy forwarding `/api/v1` requests to port 8080.*
 
 ---
 
-## 10. Answers to 18 Viva / Evaluation Questions
+## 10. Roadmap & Enterprise Progression
+
+| Phase | Technology | Architecture & Status |
+| :--- | :--- | :--- |
+| **Stage 1** | **React + Mock REST API** | ✅ **Complete**: 15+ interactive pages, responsive Tailwind CSS, role switches, client persistence. |
+| **Stage 2** | **Java Spring Boot REST API** | ✅ **Complete**: Spring Boot 3.3.4 backend with full REST controllers, DTOs, and transaction services. |
+| **Stage 3** | **Spring Data JPA + H2/MySQL** | ✅ **Complete**: 10 JPA entities, repository interfaces, pre-seeded sample data, dual H2 & MySQL profiles. |
+| **Stage 4** | **Spring Security + JWT** | Planned: Stateless JWT validation, `@PreAuthorize` method security. |
+| **Stage 5** | **Real GPS Telemetry** | Planned: WebSocket / MQTT streaming from hardware IoT GPS OBD-II trackers into Spring Boot. |
+| **Stage 6** | **AI Logistics Integration** | Planned: Spring Boot AI integration (Gemini API / Vertex AI) for automated route dispatch optimization and predictive maintenance. |
+
+---
+
+## 11. Answers to 18 Viva / Evaluation Questions
 
 <details>
 <summary><strong>Click to expand answers to all 18 technical viva questions</strong></summary>
@@ -346,3 +376,4 @@ The repository follows a clean, logical 16-stage commit history matching the pro
 ---
 
 **FLEETFLOW — Move smarter. Operate better.**
+

@@ -1,8 +1,27 @@
+import { apiClient } from './api/apiClient';
 import { mockStorage, STORAGE_KEYS } from './api/mockStorage';
 import { DRIVER_STATUS } from '../utils/constants';
 
 export const driverService = {
   async getAll({ search = '', status = '', sortBy = 'name', sortOrder = 'asc' } = {}) {
+    if (apiClient.isBackendActive()) {
+      try {
+        let list = await apiClient.get('/drivers', { search, status });
+        list.sort((a, b) => {
+          let valA = a[sortBy] ?? '';
+          let valB = b[sortBy] ?? '';
+          if (typeof valA === 'string') {
+            const comp = valA.localeCompare(valB);
+            return sortOrder === 'asc' ? comp : -comp;
+          }
+          return sortOrder === 'asc' ? valA - valB : valB - valA;
+        });
+        return list;
+      } catch (err) {
+        console.warn('[driverService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(200);
     let list = mockStorage.get(STORAGE_KEYS.DRIVERS);
 
@@ -37,6 +56,14 @@ export const driverService = {
   },
 
   async getById(id) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.get(`/drivers/${id}`);
+      } catch (err) {
+        console.warn('[driverService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(180);
     const list = mockStorage.get(STORAGE_KEYS.DRIVERS);
     const item = list.find(d => d.id === id);
@@ -45,6 +72,15 @@ export const driverService = {
   },
 
   async create(data) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.post('/drivers', data);
+      } catch (err) {
+        console.warn('[driverService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(300);
     const list = mockStorage.get(STORAGE_KEYS.DRIVERS);
 
@@ -81,6 +117,15 @@ export const driverService = {
   },
 
   async update(id, data) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.put(`/drivers/${id}`, data);
+      } catch (err) {
+        console.warn('[driverService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(250);
     const list = mockStorage.get(STORAGE_KEYS.DRIVERS);
     const index = list.findIndex(d => d.id === id);
@@ -101,6 +146,15 @@ export const driverService = {
   },
 
   async deactivate(id) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.patch(`/drivers/${id}/deactivate`);
+      } catch (err) {
+        console.warn('[driverService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(200);
     const list = mockStorage.get(STORAGE_KEYS.DRIVERS);
     const driver = list.find(d => d.id === id);
@@ -116,6 +170,14 @@ export const driverService = {
   },
 
   async getDriverTrips(driverId) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.get('/trips', { driverId });
+      } catch (err) {
+        console.warn('[driverService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(180);
     const trips = mockStorage.get(STORAGE_KEYS.TRIPS);
     return trips.filter(t => t.driverId === driverId);

@@ -1,8 +1,26 @@
+import { apiClient } from './api/apiClient';
 import { mockStorage, STORAGE_KEYS } from './api/mockStorage';
 import { DELIVERY_STATUS, DELIVERY_PRIORITY } from '../utils/constants';
 
 export const deliveryService = {
   async getAll({ search = '', status = '', priority = '', tripId = '', sortBy = 'eta', sortOrder = 'asc' } = {}) {
+    if (apiClient.isBackendActive()) {
+      try {
+        let list = await apiClient.get('/deliveries', { search, status, priority, tripId });
+        list.sort((a, b) => {
+          let valA = a[sortBy] ?? '';
+          let valB = b[sortBy] ?? '';
+          if (typeof valA === 'string') {
+            return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+          }
+          return sortOrder === 'asc' ? valA - valB : valB - valA;
+        });
+        return list;
+      } catch (err) {
+        console.warn('[deliveryService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(200);
     let list = mockStorage.get(STORAGE_KEYS.DELIVERIES);
 
@@ -41,6 +59,14 @@ export const deliveryService = {
   },
 
   async getById(id) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.get(`/deliveries/${id}`);
+      } catch (err) {
+        console.warn('[deliveryService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(180);
     const list = mockStorage.get(STORAGE_KEYS.DELIVERIES);
     const item = list.find(d => d.id === id);
@@ -49,6 +75,14 @@ export const deliveryService = {
   },
 
   async getByTrackingId(trackingId) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.get(`/deliveries/track/${encodeURIComponent(trackingId.trim().toUpperCase())}`);
+      } catch (err) {
+        console.warn('[deliveryService] Spring Boot API failed, falling back to mock:', err.message);
+      }
+    }
+
     await mockStorage.delay(250);
     const list = mockStorage.get(STORAGE_KEYS.DELIVERIES);
     const clean = trackingId.trim().toUpperCase();
@@ -60,6 +94,15 @@ export const deliveryService = {
   },
 
   async create(data) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.post('/deliveries', data);
+      } catch (err) {
+        console.warn('[deliveryService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(300);
     const list = mockStorage.get(STORAGE_KEYS.DELIVERIES);
 
@@ -95,6 +138,19 @@ export const deliveryService = {
   },
 
   async updateStatus(id, newStatus, { note = '', delayReason = '', isExplicitCorrection = false, correctionReason = '' } = {}) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.patch(`/deliveries/${id}/status`, {
+          status: newStatus,
+          reason: note || delayReason || correctionReason || '',
+          isExplicitCorrection
+        });
+      } catch (err) {
+        console.warn('[deliveryService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(250);
     const list = mockStorage.get(STORAGE_KEYS.DELIVERIES);
     const delivery = list.find(d => d.id === id);
@@ -130,6 +186,15 @@ export const deliveryService = {
   },
 
   async confirmProofOfDelivery(id, proofData) {
+    if (apiClient.isBackendActive()) {
+      try {
+        return await apiClient.post(`/deliveries/${id}/proof`, proofData);
+      } catch (err) {
+        console.warn('[deliveryService] Spring Boot API failed, falling back to mock:', err.message);
+        throw err;
+      }
+    }
+
     await mockStorage.delay(300);
     const list = mockStorage.get(STORAGE_KEYS.DELIVERIES);
     const delivery = list.find(d => d.id === id);
