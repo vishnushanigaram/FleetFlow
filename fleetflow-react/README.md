@@ -1,145 +1,382 @@
-# FleetFlow — Logistics, Fleet & Delivery Operations Management Platform
+# 🚛 FleetFlow – Logistics, Fleet & Delivery Operations Management Platform
 
-[![React](https://img.shields.io/badge/React-18.3-61dafb.svg?style=flat&logo=react)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.4-646cff.svg?style=flat&logo=vite)](https://vitejs.dev/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38bdf8.svg?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
-[![React Router](https://img.shields.io/badge/React_Router-6.26-ca4245.svg?style=flat&logo=react-router)](https://reactrouter.com/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+**Move Smarter. Deliver More.**
 
-> **Move Smarter. Deliver More.**  
-> FleetFlow is an enterprise-grade logistics and fleet operations management platform built for transport companies, freight coordinators, warehouse logistics teams, and fleet administrators.
+FleetFlow is a full-stack logistics and fleet operations management platform designed to help transport companies manage vehicles, drivers, trips, deliveries, maintenance, fuel consumption, and operational performance through a centralized system.
+
+The application provides separate dashboards for Fleet Managers, Operations Dispatchers, Commercial Drivers, and Platform Administrators.
+
+It is built using **React, Java Spring Boot, Spring Data JPA, and MySQL**, with REST APIs connecting the frontend and backend.
 
 ---
 
-## 1. Project Overview & Business Problem
+## 📌 Table of Contents
 
-### Business Problem
-- **Disconnected Systems**: Fleet operators traditionally juggle drivers, vehicle availability, work orders, fuel receipts, and delivery tracking across fragmented spreadsheets and messaging apps.
-- **Downtime & Expired Compliance**: Missed preventive maintenance dates and expired vehicle fitness or driver commercial licenses lead to costly breakdowns and regulatory penalties.
-- **Lack of Real-time Visibility**: Operations teams struggle to track delayed shipments, optimize fleet capacity utilization, or obtain verifiable digital proof-of-delivery (e-POD).
-- **Scalability Needs**: Organizations require an enterprise-grade frontend architecture that can seamlessly transition from a client-side mock REST prototype to a production **Java Spring Boot + Spring Data JPA + MySQL** backend without rewriting the React application.
+1. [Project Overview](#-project-overview)
+2. [Problem Statement](#-problem-statement)
+3. [Key Features](#-key-features)
+4. [User Roles](#-user-roles)
+5. [Technology Stack](#-technology-stack)
+6. [System Architecture](#-system-architecture)
+7. [Business Rules](#-business-rules)
+8. [Project Structure](#-project-structure)
+9. [Database Design](#-database-design)
+10. [Full-Stack Integration](#-full-stack-integration)
+11. [Installation and Setup](#-installation-and-setup)
+12. [Demo Accounts](#-demo-accounts)
+13. [Future Enhancements](#-future-enhancements)
+14. [Technical Interview Questions](#-technical-interview-questions)
+15. [Project Completion Status](#-project-completion-status)
+
+---
+
+## 1. 📖 Project Overview
+
+FleetFlow is a centralized fleet and logistics management solution that simplifies transportation operations.
+
+Instead of managing vehicles, drivers, trips, and deliveries through separate spreadsheets or manual records, FleetFlow brings everything together in one platform.
+
+The system allows organizations to:
+
+- Manage vehicle and driver information.
+- Assign vehicles and drivers to trips.
+- Monitor trip and delivery progress.
+- Maintain vehicle service records.
+- Track fuel consumption and expenses.
+- Capture digital proof of delivery.
+- Monitor operational performance through dashboards and analytics.
+
+**Main Objective:** To improve fleet utilization, reduce operational delays, prevent resource conflicts, and provide better visibility into transportation activities.
+
+---
+
+## 2. 🎯 Problem Statement
+
+Traditional logistics operations face several challenges:
+
+**1. Disconnected Information**
+
+Vehicle details, driver records, fuel expenses, and delivery information are often maintained in different systems.
+
+**2. Vehicle and Driver Availability**
+
+Assigning an already occupied vehicle or unavailable driver can create scheduling conflicts.
+
+**3. Maintenance Management**
+
+Missed service schedules and expired vehicle documents can lead to unexpected breakdowns and compliance issues.
+
+**4. Delivery Tracking**
+
+Operations teams need a centralized way to monitor shipment progress and identify delayed deliveries.
+
+**5. Lack of Operational Insights**
+
+Without proper analytics, managers find it difficult to evaluate fleet utilization, fuel expenses, and delivery performance.
 
 ### FleetFlow Solution
-FleetFlow provides an end-to-end operational operating system designed to handle the entire logistical lifecycle:
-1. **Asset Management**: Full vehicle lifecycle tracking, odometer tracking, capacity limits, and regulatory document expiry alerts.
-2. **Personnel Compliance**: Commercial Driver License (CDL) verification, safety rating indices, and automated availability locking.
-3. **Trip Planning & Scheduling**: Strict assignment validation ensuring only `Available` vehicles and drivers can be dispatched.
-4. **Interactive Dispatch**: Drag-and-drop Kanban dispatch board with real-time status transitions.
-5. **Live Route Simulation & Telemetry**: Interactive GPS highway corridor simulation with waypoint tracking, simulated speed telemetry, and movement controls.
-6. **Consignment Lifecycle & e-POD**: Waybill tracking, digital signature capture, and supervisor-authorized delivery correction protocol.
-7. **Maintenance & Fuel Logistics**: Service work order scheduling that automatically updates vehicle duty status, plus fuel consumption analytics.
-8. **Operational Intelligence**: Real-time calculated fleet utilization, on-time SLA metrics, driver leaderboards, and CSV exports.
+
+FleetFlow addresses these problems by providing a centralized platform with resource management, automated validation, delivery tracking, maintenance management, and operational analytics.
 
 ---
 
-## 2. User Roles & Capabilities
+## 3. 🚀 Key Features
 
-| Role | Operational Scope | Key Capabilities |
-| :--- | :--- | :--- |
-| **Guest / Public** | Product exploration & package tracking | View landing page, inspect product capabilities, and track consignments publicly via tracking number (e.g., `FL-TRK-8921`). |
-| **Commercial Driver** | Assigned missions & dock fulfillment | Driver cockpit, view assigned highway trips, capture digital consignee signatures (e-POD), inspect license validity and safety index. |
-| **Operations Dispatcher**| Fleet coordination & route staging | Plan and dispatch trips with resource availability validation, manage live Kanban dispatch board, monitor GPS tracking and delayed routes. |
-| **Fleet Manager** | Resource allocation & KPI audit | Executive dashboard, vehicle/driver CRUD, preventive maintenance work orders, fuel logs, fleet capacity utilization, and exportable analytics. |
-| **Platform Admin** | System administration & diagnostics | RBAC user management, master hubs data, simulated network latency, API error injection mode, and database reset triggers. |
+### A. Vehicle Management
+
+- Add, update, view, and delete vehicle records.
+- Maintain registration numbers and vehicle specifications.
+- Track vehicle availability and operational status.
+- Monitor vehicle capacity and odometer readings.
+- Track vehicle document expiration dates.
+
+### B. Driver Management
+
+- Manage driver profiles and personal information.
+- Track commercial driving license validity.
+- Monitor driver availability.
+- Maintain driver safety ratings.
+- Track completed trips.
+
+### C. Trip Management
+
+- Create and schedule transportation trips.
+- Assign available vehicles and drivers.
+- Validate resource availability before dispatch.
+- Update trip statuses.
+- Automatically update vehicle and driver availability when trips are completed or cancelled.
+
+### D. Dispatch Management
+
+- Manage trip assignments through a Kanban-style dispatch board.
+- Monitor trip progress.
+- Organize dispatch activities.
+- Track delayed and active trips.
+
+### E. Delivery Management
+
+- Create and manage delivery consignments.
+- Track shipments through different delivery stages.
+- Maintain delivery status history.
+- Capture electronic proof of delivery (e-POD).
+- Support authorized delivery status corrections with justification.
+
+### F. Maintenance Management
+
+- Schedule preventive vehicle maintenance.
+- Create and manage service work orders.
+- Automatically mark vehicles as under maintenance when applicable.
+- Restore vehicle availability after maintenance completion.
+
+### G. Fuel Management
+
+- Record fuel purchases and consumption.
+- Track fuel expenses.
+- Maintain vehicle fuel history.
+- Generate fuel consumption summaries.
+
+### H. Dashboard and Analytics
+
+- Display fleet performance statistics.
+- Calculate vehicle utilization.
+- Monitor active trips and delayed deliveries.
+- Display driver performance information.
+- Generate operational reports.
+- Export reports in CSV format.
+
+### I. Authentication and Role-Based Access
+
+- Provide role-specific dashboards.
+- Restrict access to authorized pages.
+- Support different operational permissions.
+- Provide demo role switching for evaluation.
+
+### J. Additional Features
+
+- Light and dark themes.
+- Search, sorting, filtering, and pagination.
+- Notification center.
+- Loading skeletons and error handling.
+- Interactive route simulation.
+- Public shipment tracking.
 
 ---
 
-## 3. Technology Stack
+## 4. 👥 User Roles
 
-- **Frontend Core**: React 18 (Functional Components, Hooks, Context API)
-- **Tooling & Bundler**: Vite 5 (Ultra-fast HMR and optimized production bundling)
-- **Routing**: React Router DOM v6 (Nested routes, role-based Protected Routes, 404/403 handlers)
-- **Styling & UI**: Tailwind CSS v3 with custom color tokens and Dark/Light mode theme system
-- **Icons**: Lucide React
-- **Asynchronous Service Layer**: Dedicated domain API clients (`vehicleService`, `tripService`, etc.) backed by local persistent mock REST storage with simulated network latency and error injection.
-- **Exporting**: Client-side CSV generation utility for operational reports.
+FleetFlow supports five different user perspectives.
+
+| Role | Responsibilities |
+|---|---|
+| Guest / Public | Explore the platform and track deliveries using tracking numbers. |
+| Commercial Driver | View assigned trips, update delivery progress, and submit delivery proof. |
+| Operations Dispatcher | Plan trips, assign resources, manage dispatch operations, and monitor deliveries. |
+| Fleet Manager | Manage vehicles, drivers, maintenance, fuel records, and analytics. |
+| Platform Admin | Manage users, permissions, master data, and system settings. |
+
+Each role has access to features relevant to its responsibilities.
 
 ---
 
-## 4. Architecture & React Concepts Demonstrated
+## 5. 🛠 Technology Stack
 
-### Target Architecture (Decoupled Service Layer)
+### Frontend
+
+| Technology | Purpose |
+|---|---|
+| React 18 | Building reusable UI components |
+| Vite 5 | Frontend development and build tooling |
+| React Router DOM 6 | Application navigation and routing |
+| Tailwind CSS 3 | Responsive UI styling |
+| Lucide React | Icons |
+| JavaScript | Frontend application logic |
+
+### Backend
+
+| Technology | Purpose |
+|---|---|
+| Java | Backend programming language |
+| Spring Boot 3.3.4 | Building REST APIs |
+| Spring Data JPA | Database operations and ORM |
+| Hibernate | Object-relational mapping |
+| MySQL 8.x | Relational database |
+| Maven | Dependency management and project build |
+
+### Communication
+
+**REST API integration** connects the React frontend with the Spring Boot backend using HTTP requests.
+
+The application uses standard HTTP methods:
+
+- `GET` – Retrieve information.
+- `POST` – Create new records.
+- `PUT` – Update existing records.
+- `PATCH` – Partially update records.
+- `DELETE` – Remove records.
+
+---
+
+## 6. 🏗 System Architecture
+
+FleetFlow follows a layered architecture that separates frontend presentation, backend business logic, and database operations.
+
+### Architecture Diagram
+
+```text
+              USER
+                |
+                ▼
+       REACT FRONTEND
+       (React + Vite)
+                |
+                ▼
+       COMPONENTS & PAGES
+                |
+                ▼
+       CONTEXT & HOOKS
+                |
+                ▼
+        SERVICE LAYER
+      (vehicleService,
+       driverService,
+       tripService, etc.)
+                |
+                ▼
+          API CLIENT
+                |
+                ▼
+          REST APIs
+                |
+                ▼
+       SPRING BOOT BACKEND
+                |
+                ▼
+         CONTROLLER
+                |
+                ▼
+          SERVICE
+       (Business Logic)
+                |
+                ▼
+         REPOSITORY
+        (Spring Data JPA)
+                |
+                ▼
+           HIBERNATE
+                |
+                ▼
+          MYSQL DATABASE
 ```
-[ React Components & Pages ]
-           │
-           ▼
-[ Context & Custom Hooks ] (useAuth, useFetch, useDebounce, useLocalStorage, useNotifications)
-           │
-           ▼
-[ Validation & Utility Layer ] (validateVehicle, validateTrip, dateUtils, formatters)
-           │
-           ▼
-[ Dedicated Domain Services ] (vehicleService, tripService, deliveryService, etc.)
-           │
-           ▼
-[ API Client / Mock Storage Adapter ] (Persistent localStorage + simulated async latency)
-           │
-           ▼ (Future Migration Path)
-[ Spring Boot REST Controller -> Spring Data JPA -> MySQL Database ]
-```
 
-### React Concepts Implemented:
-- **Component Composition & Props**: Modular, reusable UI components (`Badge`, `Button`, `Input`, `Select`, `Modal`, `Pagination`, `SearchFilterBar`, `LoadingSkeleton`, `EmptyState`, `ConfirmDialog`).
-- **Hooks & State Management**: `useState`, `useEffect`, `useMemo`, `useCallback`, and `useRef`.
-- **Custom Hooks**:
-  - `useAuth`: Exposes user state, roles, login, register, and 1-click role switching.
-  - `useDebounce`: Real-time debouncing of search filters (e.g. 300ms) to prevent excessive filtering re-renders.
-  - `useLocalStorage`: Reactive synchronization with browser storage.
-  - `useFetch`: Generalized asynchronous fetch hook with loading, error, and refetch states.
-  - `useTheme`: Persistent light/dark mode theme switching.
-  - `useNotifications`: Real-time notification center and toast dispatch.
-- **Context API**: `AuthContext`, `NotificationContext`, `ThemeContext`.
-- **Protected & Role-Based Routes**: Enforces role access (`Driver`, `Dispatcher`, `Manager`, `Admin`) and redirects unauthorized attempts to a dedicated 403 screen.
-- **Error Boundaries**: Class-based `ErrorBoundary` wrapper that intercepts runtime rendering exceptions with a recovery retry button.
-- **Client-Side Validation & Business Rules**: Schema validation preventing duplicate vehicle registrations or driver licenses, past-date validations, and resource locking.
+### Frontend Architecture
+
+The React application is divided into reusable components, pages, hooks, contexts, and service modules.
+
+Important React concepts used:
+
+- **Component Composition:** Reusable buttons, tables, modals, cards, and forms.
+- **React Hooks:** `useState`, `useEffect`, `useMemo`, `useCallback`, and `useRef`.
+- **Context API:** Shared authentication, notification, and theme state.
+- **Custom Hooks:** Authentication, data fetching, debouncing, and local storage.
+- **Protected Routes:** Restrict access based on user authentication and roles.
+- **Error Boundaries:** Handle unexpected rendering errors.
+
+### Backend Architecture
+
+The Spring Boot backend follows a layered architecture:
+
+| Layer | Responsibility |
+|---|---|
+| Controller | Handles incoming HTTP requests and returns responses. |
+| Service | Implements business logic and validation. |
+| Repository | Communicates with the database using Spring Data JPA. |
+| Entity | Represents database tables. |
+| DTO | Transfers structured data between frontend and backend. |
+| Configuration | Manages application and database configuration. |
+
+This separation makes the application easier to maintain, test, and extend.
 
 ---
 
-## 5. Important Business Rules Enforced
+## 7. ⚙ Important Business Rules
 
-1. **Vehicle Assignment Locking**: Trips cannot be created with a vehicle that is currently `On Trip`, `Maintenance`, or `Inactive`.
-2. **Driver Availability Locking**: Trips cannot be assigned to drivers who are `On Trip`, `Leave`, `Inactive`, or have an expired commercial driver license.
-3. **Trip Lifecycle Integrity**: Completed trips cannot accept in-transit updates. Completing a trip automatically returns the vehicle and driver to `Available` status and increments the driver's completed trips counter.
-4. **Delivery Protection Protocol**: A delivery marked as `Delivered` with signed proof cannot be reverted to earlier stages without an explicit supervisor correction protocol requiring justification and incident logging.
-5. **Maintenance Impact**: Scheduling maintenance in `In Progress` status automatically takes the vehicle off duty and flags it as `Maintenance`. Completing the work order restores the vehicle to `Available`.
-6. **Regulatory Expiry Alerts**: Driver licenses and vehicle fitness certificates expiring within 30 days are automatically surfaced with amber badges and notification center alerts.
+FleetFlow implements business rules to maintain consistency across fleet operations.
+
+**1. Vehicle Availability Validation**
+
+A vehicle cannot be assigned to a new trip if its current status is:
+
+- On Trip
+- Maintenance
+- Inactive
+
+**2. Driver Availability Validation**
+
+A driver cannot be assigned if they are:
+
+- Already on another trip.
+- On leave.
+- Inactive.
+- Holding an expired commercial driving license.
+
+**3. Trip Lifecycle Management**
+
+When a trip is completed or cancelled, the system updates the associated vehicle and driver availability.
+
+**4. Delivery Status Protection**
+
+A completed delivery with signed proof cannot be reverted without an authorized correction process and a valid reason.
+
+**5. Maintenance Management**
+
+Vehicles under active maintenance are automatically marked unavailable for new trip assignments.
+
+**6. Document Expiration Alerts**
+
+The system highlights vehicle and driver documents approaching their expiration dates.
+
+These rules help prevent invalid assignments and maintain operational consistency.
 
 ---
 
-## 6. Directory Structure
+## 8. 📂 Project Structure
 
-```
+The project is organized into separate frontend and backend applications.
+
+### Frontend Structure
+
+```text
 fleetflow-react/
-├── index.html
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-├── postcss.config.js
+│
+├── public/
 ├── src/
 │   ├── assets/
+│   │
 │   ├── components/
-│   │   ├── common/             # Badge, Button, Input, Modal, Pagination, SearchFilterBar, EmptyState, etc.
-│   │   ├── layout/             # Header, Sidebar, DashboardLayout, NotificationDropdown
-│   │   ├── vehicles/           # VehicleTable, VehicleCard, VehicleFormModal, VehicleDetailsModal, VehicleComparisonModal
-│   │   ├── drivers/            # DriverTable, DriverCard, DriverFormModal, DriverProfileModal
-│   │   ├── trips/              # TripTable, TripCard, CreateTripModal, TripStatusModal, LiveRouteMap, DispatchBoard
-│   │   ├── deliveries/         # DeliveryTable, DeliveryTimeline, ProofOfDeliveryModal, StatusCorrectionModal, CreateDeliveryModal
-│   │   ├── maintenance/        # MaintenanceTable, CreateMaintenanceModal
-│   │   ├── fuel/               # FuelTable, CreateFuelModal
-│   │   └── analytics/          # StatCard, MetricCharts, UtilizationGauge, DriverLeaderboard
+│   │   ├── common/
+│   │   ├── layout/
+│   │   ├── vehicles/
+│   │   ├── drivers/
+│   │   ├── trips/
+│   │   ├── deliveries/
+│   │   ├── maintenance/
+│   │   ├── fuel/
+│   │   └── analytics/
+│   │
 │   ├── pages/
-│   │   ├── public/             # LandingPage, PublicTrackingPage
-│   │   ├── auth/               # LoginPage, RegisterPage, ForgotPasswordPage
-│   │   ├── driver/             # DriverDashboard, DriverTripsPage, DriverDeliveriesPage, DriverProfilePage
-│   │   ├── operations/         # OperationsDashboard, TripPlanningPage, DispatchBoardPage, LiveTrackingPage, DeliveriesPage
-│   │   ├── manager/            # ManagerDashboard, VehiclesPage, DriversPage, MaintenancePage, FuelPage, AnalyticsPage
-│   │   ├── admin/              # AdminDashboard, UserManagementPage, MasterDataPage, SystemSettingsPage
-│   │   └── shared/             # NotFoundPage, UnauthorizedPage
-│   ├── routes/                 # AppRoutes, ProtectedRoute
-│   ├── context/                # AuthContext, NotificationContext, ThemeContext
-│   ├── hooks/                  # useAuth, useDebounce, useLocalStorage, useFetch
+│   │   ├── public/
+│   │   ├── auth/
+│   │   ├── driver/
+│   │   ├── operations/
+│   │   ├── manager/
+│   │   ├── admin/
+│   │   └── shared/
+│   │
+│   ├── routes/
+│   ├── context/
+│   ├── hooks/
 │   ├── services/
-│   │   ├── api/                # apiClient, mockStorage (with latency & error injection simulation)
+│   │   ├── api/
 │   │   ├── authService.js
 │   │   ├── vehicleService.js
 │   │   ├── driverService.js
@@ -147,235 +384,309 @@ fleetflow-react/
 │   │   ├── deliveryService.js
 │   │   ├── maintenanceService.js
 │   │   ├── fuelService.js
-│   │   ├── analyticsService.js
-│   │   └── notificationService.js
-│   ├── utils/                  # constants, dateUtils, formatters, validators, exportCsv
-│   ├── data/                   # Initial seed data for vehicles, drivers, trips, fuel, and users
+│   │   └── analyticsService.js
+│   │
+│   ├── utils/
+│   ├── data/
 │   ├── App.jsx
 │   ├── main.jsx
 │   └── index.css
+│
+├── package.json
+├── vite.config.js
+└── tailwind.config.js
+```
+
+### Backend Structure
+
+```text
+fleetflow-backend/
+│
+└── src/
+    └── main/
+        ├── java/
+        │   └── com/fleetflow/
+        │       ├── controller/
+        │       ├── service/
+        │       ├── repository/
+        │       ├── entity/
+        │       ├── dto/
+        │       ├── config/
+        │       └── FleetFlowApplication.java
+        │
+        └── resources/
+            └── application.properties
+
+pom.xml
 ```
 
 ---
 
-## 7. Demo Accounts & Quick Switcher
+## 9. 🗄 Database Design
 
-FleetFlow includes a **Quick Demo Switcher** directly in the top navigation bar, allowing immediate switching between perspectives without tedious logins:
+FleetFlow uses MySQL to store and manage operational data.
 
-| Role | Name | Email | Password | Scope |
-| :--- | :--- | :--- | :--- | :--- |
-| **Fleet Manager** | Rohit Sharma | `manager@fleetflow.io` | `password123` | Executive KPIs, vehicle/driver CRUD, fuel, maintenance, analytics |
-| **Operations Dispatcher** | Sarah Jenkins | `dispatcher@fleetflow.io`| `password123` | Trip planning, live Kanban board, route tracking, delivery monitoring |
-| **Commercial Driver** | Ajay Kumar | `driver@fleetflow.io` | `password123` | Driver cockpit, active trip progress, digital e-POD signature capture |
-| **Platform Admin** | Vikram Mehta | `admin@fleetflow.io` | `password123` | User access control, master hubs, database reset, simulated API failure |
+The backend uses Spring Data JPA and Hibernate to map Java entities to relational database tables.
+
+### Main Database Entities
+
+The database contains entities for the following operational areas:
+
+- Users
+- Vehicles
+- Drivers
+- Trips
+- Deliveries
+- Maintenance records
+- Fuel records
+- Other supporting operational data
+
+### Entity Relationships
+
+| Relationship | Description |
+|---|---|
+| Vehicle → Trips | One vehicle can be associated with multiple trips over time. |
+| Driver → Trips | One driver can complete multiple trips over time. |
+| Trip → Deliveries | A trip can contain multiple deliveries. |
+| Vehicle → Maintenance | A vehicle can have multiple maintenance records. |
+| Vehicle → Fuel Records | A vehicle can have multiple fuel records. |
+
+Foreign keys maintain relationships between related database records.
 
 ---
 
-## 8. Local Setup Instructions
+## 10. 🔗 Full-Stack Integration
+
+FleetFlow integrates React with a Java Spring Boot backend through REST APIs.
+
+### How Frontend and Backend Communicate
+
+Consider the process of adding a new vehicle.
+
+1. The Fleet Manager opens the vehicle management page.
+2. The manager enters vehicle information and submits the form.
+3. React calls the vehicle service.
+4. The service sends an HTTP `POST` request to the Spring Boot API.
+5. The Spring Boot Controller receives the request.
+6. The Service layer validates the business rules.
+7. The Repository saves the vehicle using Spring Data JPA.
+8. Hibernate generates the required SQL query.
+9. MySQL stores the vehicle information.
+10. The backend returns a response to React.
+11. React updates the interface with the latest information.
+
+### Dual-Mode Architecture
+
+FleetFlow also supports two data modes.
+
+| Mode | Description |
+|---|---|
+| Spring Boot Mode | Uses REST APIs and stores data in MySQL. |
+| Mock Mode | Uses browser localStorage for persistent demonstration data. |
+
+The frontend can detect backend availability and use the appropriate data source. Users can also switch modes through the backend status indicator.
+
+**Backend API Base URL:**
+
+```text
+http://localhost:8080/api/v1
+```
+
+---
+
+## 11. 💻 Installation and Setup
 
 ### Prerequisites
-- Node.js (v18 or higher recommended)
-- npm or pnpm or yarn
 
-### Installation Steps
+Install the following software before running the application:
+
+- Node.js 18 or higher
+- npm
+- Java JDK 17 or compatible configured JDK
+- Maven
+- MySQL 8.x
+- VS Code or IntelliJ IDEA
+
+### Step 1: Clone the Repository
+
 ```bash
-# 1. Clone repository
-git clone https://github.com/your-username/fleetflow-react.git
+git clone https://github.com/vishnushanigaram/FleetFlow.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd FleetFlow
+```
+
+### Step 2: Configure MySQL
+
+Create the database:
+
+```sql
+CREATE DATABASE fleetflow_db;
+```
+
+Configure your MySQL username, password, and database URL in the backend's `application.properties`.
+
+Example:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/fleetflow_db
+spring.datasource.username=root
+spring.datasource.password=your_password
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+```
+
+Use your actual local database credentials.
+
+### Step 3: Start the Spring Boot Backend
+
+Open a terminal:
+
+```bash
+cd fleetflow-backend
+```
+
+Run:
+
+```bash
+mvn spring-boot:run
+```
+
+On Windows, if Maven is not installed globally, use the Maven wrapper if available:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+The backend will run at:
+
+```text
+http://localhost:8080
+```
+
+### Step 4: Start the React Frontend
+
+Open another terminal:
+
+```bash
 cd fleetflow-react
+```
 
-# 2. Install dependencies
+Install dependencies:
+
+```bash
 npm install
+```
 
-# 3. Start development server
+Start the frontend:
+
+```bash
 npm run dev
 ```
 
-The application will be accessible at `http://localhost:3000`.
+The Vite development server is configured to run at:
 
-### Building for Production
+```text
+http://localhost:3000
+```
+
+### Step 5: Open FleetFlow
+
+Open the frontend URL in your browser.
+
+Make sure both the Spring Boot backend and MySQL database are running to use the full-stack application.
+
+### Production Build
+
+To generate an optimized frontend build:
+
 ```bash
-# Build optimized production bundle
 npm run build
+```
 
-# Preview production build locally
+To preview the production build:
+
+```bash
 npm run preview
 ```
 
 ---
 
-## 9. Full-Stack Integration (Spring Boot REST API + React)
+## 12. 🔐 Demo Accounts
 
-The project now includes an enterprise **Java Spring Boot 3.3.4** backend located in the `../fleetflow-backend` directory, delivering complete full-stack integration with automatic fallback support.
+FleetFlow provides demo accounts for testing different user roles.
 
-### Dual-Mode Architecture & Auto-Detection
-The frontend `apiClient.js` automatically probes `http://localhost:8080/api/v1` on startup:
-1. **When Spring Boot is running**: React transparently routes all REST operations (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) to the Spring Boot backend and persists data in **MySQL**. A live green badge **"Spring Boot Active"** appears in the header.
-2. **When Spring Boot is offline**: React smoothly falls back to the client-side persistent storage with zero crashes or broken UI. The header displays **"Mock DB Active"**.
-3. **Manual Overrides**: Users can click the backend badge in the top navigation bar to force Spring Boot mode, force Mock mode, or re-test live connectivity at any time.
+| Role | Email | Password |
+|---|---|---|
+| Fleet Manager | manager@fleetflow.io | password123 |
+| Operations Dispatcher | dispatcher@fleetflow.io | password123 |
+| Commercial Driver | driver@fleetflow.io | password123 |
+| Platform Admin | admin@fleetflow.io | password123 |
 
-### How to Run Full-Stack (Frontend + Backend)
+A Quick Demo Switcher is also available in the navigation bar for switching between roles during demonstrations.
 
-#### Step 1: Start the Spring Boot Backend (Port 8080)
-```bash
-cd ../fleetflow-backend
-mvn spring-boot:run
-# Or on Windows using wrapper:
-# .\mvnw.cmd spring-boot:run
-```
-*Backend endpoints will be live at `http://localhost:8080/api/v1` connected directly to your MySQL database (`fleetflow_db`).*
-
-#### Step 2: Start the React Frontend (Port 3000)
-```bash
-cd fleetflow-react
-npm run dev
-```
-*The Vite development server runs on `http://localhost:3000` with an automatic reverse proxy forwarding `/api/v1` requests to port 8080.*
+*These are demonstration credentials, not production authentication credentials.*
 
 ---
 
-## 10. Roadmap & Enterprise Progression
+## 13. 🔮 Future Enhancements
 
-| Phase | Technology | Architecture & Status |
-| :--- | :--- | :--- |
-| **Stage 1** | **React + Mock REST API** | ✅ **Complete**: 15+ interactive pages, responsive Tailwind CSS, role switches, client persistence. |
-| **Stage 2** | **Java Spring Boot REST API** | ✅ **Complete**: Spring Boot 3.3.4 backend with full REST controllers, DTOs, and transaction services. |
-| **Stage 3** | **Spring Data JPA + MySQL** | ✅ **Complete**: 10 JPA entities, repository interfaces, pre-seeded sample data, MySQL 8.x database persistence. |
-| **Stage 4** | **Spring Security + JWT** | Planned: Stateless JWT validation, `@PreAuthorize` method security. |
-| **Stage 5** | **Real GPS Telemetry** | Planned: WebSocket / MQTT streaming from hardware IoT GPS OBD-II trackers into Spring Boot. |
-| **Stage 6** | **AI Logistics Integration** | Planned: Spring Boot AI integration (Gemini API / Vertex AI) for automated route dispatch optimization and predictive maintenance. |
+The following improvements can extend FleetFlow into a more advanced logistics platform.
+
+| Enhancement | Planned Technology |
+|---|---|
+| Secure authentication | Spring Security and JWT |
+| Live GPS tracking | WebSockets and GPS integration |
+| Route optimization | AI-based route recommendations |
+| Predictive maintenance | Machine learning |
+| Real-time notifications | WebSockets |
+| Advanced reporting | Backend analytics and optimized SQL queries |
+
+These are planned enhancements and are not part of the currently completed implementation.
+
+---
+## 14. ✅ Project Completion Status
+
+| Module | Status |
+|---|---|
+| React Frontend | Completed |
+| Responsive Dashboard | Completed |
+| Vehicle Management | Completed |
+| Driver Management | Completed |
+| Trip Management | Completed |
+| Dispatch Management | Completed |
+| Delivery Tracking | Completed |
+| Maintenance Management | Completed |
+| Fuel Management | Completed |
+| Dashboard Analytics | Completed |
+| Spring Boot REST APIs | Completed |
+| Spring Data JPA Integration | Completed |
+| MySQL Database Integration | Completed |
+| Dual-Mode Data Support | Completed |
+| Spring Security and JWT | Planned |
+| Real GPS Integration | Planned |
+| AI-Based Route Optimization | Planned |
 
 ---
 
-## 11. Answers to 18 Viva / Evaluation Questions
+## 👨‍💻 Author
 
-<details>
-<summary><strong>Click to expand answers to all 18 technical viva questions</strong></summary>
+**Vishnu Shanigaram**
 
-### 1. Why did you choose React for FleetFlow?
-React was selected for its component-based architecture, declarative state management, virtual DOM performance, and rich ecosystem. In a complex logistics dashboard with rapidly changing telemetry (velocities, coordinates, trip progress, notification toasts), React allows localized re-rendering without refreshing the whole page.
+B.Tech – Computer Science and Engineering
 
-### 2. How did you structure the application into domains/components?
-The codebase follows a domain-driven structure under `src/`:
-- `components/common/`: Reusable primitive UI atoms (buttons, badges, inputs, modals, pagination).
-- Domain folders (`vehicles/`, `drivers/`, `trips/`, `deliveries/`, `maintenance/`, `fuel/`, `analytics/`): Contain feature-specific tables, cards, and modal dialogs.
-- `services/`: Encapsulates all domain-specific API calls away from the UI.
-- `pages/`: Grouped by role (`manager/`, `operations/`, `driver/`, `admin/`, `public/`).
-
-### 3. Why are API calls kept inside service files?
-Keeping API logic in dedicated service files follows the **Single Responsibility Principle** and **Separation of Concerns**. UI components should only care about rendering and user interaction, not HTTP methods or endpoint URLs. This design allows swapping the mock localStorage backend with a Spring Boot REST API by modifying only the service layer, requiring zero rewrites in page components.
-
-### 4. Where did you use Context API and why?
-- `AuthContext`: Manages user credentials, active role permissions, login/logout, and demo role switching across the application.
-- `NotificationContext`: Manages system-wide alerts, unread counts, and real-time toast alerts.
-- `ThemeContext`: Synchronizes Dark/Light mode theme state with `document.documentElement` and localStorage.
-
-### 5. How do protected and role-based routes work?
-The `ProtectedRoute` component inspects the current authentication state from `useAuth`. If the user is unauthenticated, it redirects them to `/auth/login`. If the route requires specific roles (e.g. `['admin']` or `['manager']`) and the current user lacks them, it redirects to the `/unauthorized` (403) page.
-
-### 6. How do you prevent assigning an unavailable vehicle?
-When planning a new trip in `CreateTripModal.jsx` and `tripService.js`:
-1. The vehicle dropdown lists vehicles along with their current status.
-2. The `validateTrip` validator and `tripService.create` method explicitly check `vehicle.status === VEHICLE_STATUS.AVAILABLE`. If a vehicle is `On Trip` or `Maintenance`, trip creation is rejected with an explanatory validation error.
-
-### 7. How do you prevent assigning an unavailable driver?
-Similarly, `driverService` and `tripService` enforce:
-1. `driver.status === DRIVER_STATUS.AVAILABLE`.
-2. The driver's commercial license expiration date is checked; drivers with expired licenses cannot be assigned.
-
-### 8. How does trip status affect vehicle/driver availability?
-- When a trip becomes `Assigned` or `In Transit`, the assigned vehicle and driver status are updated to `Assigned` or `On Trip`, locking them from other dispatches.
-- When a trip transitions to `Completed` or `Cancelled`, `tripService.updateStatus` automatically sets both the vehicle and driver back to `Available`, updates the vehicle odometer, and increments the driver's completed trips count.
-
-### 9. How does your delivery tracking timeline work?
-Each consignment contains an `events` array of chronological milestones (`Manifest Created`, `Picked Up`, `In Transit`, `Delivered`). As the delivery status updates, a new timestamped event is appended. Delivered shipments store electronic proof-of-delivery (e-POD) with consignee name and timestamp.
-
-### 10. How do search, filters, sorting and pagination work?
-1. **Search**: Controlled input passed through the `useDebounce` hook (300ms delay) to prevent UI lag.
-2. **Filters**: Category dropdowns (status, vehicle type, fuel type) filter the in-memory array.
-3. **Sorting**: Array `sort()` comparing strings (`localeCompare`) or numbers based on active `sortBy` and `sortOrder`.
-4. **Pagination**: Computes total pages via `Math.ceil(total / pageSize)` and slices data using `useMemo` for smooth page transitions.
-
-### 11. How do you calculate dashboard metrics?
-Metrics are calculated dynamically from actual data records in `analyticsService.js`:
-- Active vehicles, drivers on duty, active trips, and delayed deliveries are computed using array `.filter()`.
-- Fleet Capacity Utilization is computed as: `((vehiclesOnTrip + vehiclesAssigned) / operableFleet) * 100`.
-- Fuel and maintenance totals use `.reduce()`.
-
-### 12. How do you handle loading, error and empty states?
-- **Loading**: `TableSkeleton`, `CardSkeleton`, and `MetricSkeleton` animated pulse skeletons.
-- **Error**: Try/catch blocks in services, form error banners, global `ErrorBoundary`, and a simulated API network failure toggle in admin settings.
-- **Empty States**: Reusable `EmptyState` component displaying an icon, contextual description, and action button.
-
-### 13. How would you replace the mock API with Spring Boot?
-1. Change the base URL in `apiClient.js` to the Spring Boot host (e.g. `http://localhost:8080/api/v1`).
-2. Replace `mockStorage.get/set` in service functions with native `fetch` or `axios` HTTP calls (`GET /api/v1/vehicles`, `POST /api/v1/trips`, etc.). No changes required in React components.
-
-### 14. How would MySQL relationships map to the React data?
-- `vehicles` table (1-to-many) -> `trips` table via `vehicle_id`.
-- `drivers` table (1-to-many) -> `trips` table via `driver_id`.
-- `trips` table (1-to-many) -> `deliveries` table via `trip_id`.
-- `vehicles` table (1-to-many) -> `maintenance` and `fuel_records` via `vehicle_id`.
-
-### 15. How would Spring Security/JWT change authentication?
-`authService.login()` would send a POST request with credentials to `/api/v1/auth/login`. Spring Boot verifies credentials with BCrypt and returns a signed JWT containing user claims and roles. The React app stores the JWT in `localStorage` and includes it in the `Authorization: Bearer <token>` header for subsequent requests.
-
-### 16. Where would you integrate AI in this platform?
-On the backend (Spring Boot) connecting to Gemini API:
-1. **AI Route & Delay Risk Predictor**: Analyze historical traffic, distance, and weather signals to predict delivery delay probability.
-2. **AI Maintenance Assistant**: Recommend preventive service intervals based on vehicle odometer rate and historical service frequency.
-3. **AI Dispatcher Assistant**: Automatically recommend optimal driver-vehicle pairs matching cargo weight to vehicle payload limits.
-
-### 17. Why should AI/API keys not be exposed in React?
-Client-side JavaScript code is fully inspectable in browser dev tools. Exposing private API keys in React allows malicious users to steal credentials, deplete quota, or gain unauthorized data access. AI and external service calls must always be proxied through a secure backend.
-
-### 18. How would you scale FleetFlow for thousands of vehicles and active trips?
-1. **Server-side Pagination & Filtering**: Move search, filter, and pagination logic to the Spring Boot REST endpoints with SQL `LIMIT` and `OFFSET` queries.
-2. **Database Indexing**: Add database indexes on `registration_no`, `driver_id`, `status`, and `planned_start`.
-3. **Caching**: Utilize Redis on the backend for frequently read dashboard KPI summaries.
-4. **WebSocket Telemetry**: Use WebSockets (STOMP/MQTT) instead of polling to stream live vehicle GPS coordinates efficiently.
-5. **Code Splitting**: Implement `React.lazy` and dynamic imports for role-specific routes to keep client bundle sizes low.
-
-</details>
+GitHub: [vishnushanigaram](https://github.com/vishnushanigaram)
 
 ---
 
-## 11. Git Commit History
+<p align="center">
 
-The repository follows a clean, logical 16-stage commit history matching the project rubric:
-1. `feat: initialize React project and architecture with Tailwind CSS and Vite`
-2. `feat: add layout, routing and role-based structure with sidebar and header`
-3. `feat: build authentication simulation and demo role switcher`
-4. `feat: build vehicle management with CRUD, specs, and document tracking`
-5. `feat: build driver management with CDL verification and availability tracking`
-6. `feat: build trip planning, assignment validation and status workflow`
-7. `feat: build delivery consignment tracking, timeline and electronic POD`
-8. `feat: add preventive maintenance module with vehicle duty locking`
-9. `feat: add fuel records, volume logs and energy consumption summaries`
-10. `feat: build executive dashboard, KPI cards and utilization gauge`
-11. `feat: add operational notifications center, alert badges and toast popups`
-12. `feat: add debounced search, multi-criteria filters, sorting and pagination`
-13. `feat: add loading skeletons, empty states, error boundary and API error simulator`
-14. `feat: responsive design refinements, dark/light theme and accessibility`
-15. `feat: add Kanban dispatch board, live route map simulation and vehicle comparison`
-16. `docs: add comprehensive README with architecture, roadmap and viva guide`
+**FLEETFLOW**
 
----
+*Move Smarter. Operate Better. Deliver More.*
 
-## 12. Evaluation Summary & Definition of Done
-
-- [x] **Full Role-Based Workflows**: Guest, Driver, Operations Dispatcher, Fleet Manager, and Platform Admin.
-- [x] **Vehicle & Driver Management**: Complete CRUD, search, filter, sort, and pagination.
-- [x] **Resource Availability Enforcement**: Prevents assigning in-maintenance or on-trip vehicles and busy drivers.
-- [x] **Route Tracking Simulation**: Interactive SVG highway map with simulated movement and telemetry HUD.
-- [x] **e-POD & Correction Flow**: Digital signature capture and supervisor-authorized status correction protocol.
-- [x] **Maintenance & Fuel Modules**: Service work orders and fuel economy logs.
-- [x] **Dynamic Dashboard & Analytics**: Computed fleet utilization %, on-time delivery rates, and charts.
-- [x] **Architecture Decoupling**: 100% separated UI and Service/API layer ready for Spring Boot + MySQL.
-- [x] **Code Quality**: Clean build, zero runtime errors, responsive layout, Dark/Light mode.
-
----
-
-**FLEETFLOW — Move smarter. Operate better.**
-
-#   F l e e t F l o w  
- 
+</p>
